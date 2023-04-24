@@ -67,7 +67,7 @@ object InferSchema {
    * point checking if it is an Int, as the final type must be Double or higher.
    */
   private def inferField(typeSoFar: DataType, field: String, sdf: SimpleDateFormat): DataType = {
-    if (field == null || field.isEmpty) {
+    if (field == null || field.isEmpty || field.stripMargin.toLowerCase() == "null") {
       typeSoFar
     } else {
       typeSoFar match {
@@ -76,6 +76,7 @@ object InferSchema {
         case LongType => tryParseLong(field, sdf)
         case DoubleType => tryParseDouble(field, sdf)
         case TimestampType => tryParseTimestamp(field, sdf)
+        case BooleanType => tryParseBoolean(field)
         case StringType => StringType
         case other: DataType =>
           throw new UnsupportedOperationException(s"Unexpected data type $other")
